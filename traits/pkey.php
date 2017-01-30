@@ -72,7 +72,7 @@ trait Pkey
 	 * @param  string $password Optional password to decrypt the key
 	 * @return Bool             Whether or not the key was successfully imported
 	 */
-	final public function setPrivateKey(String $key, String $password = null) : Bool
+	final public function setPrivateKey($key, $password = null)
 	{
 		if ($this->_private_key = $this->_importPrivateKey($key, $password)) {
 			return true;
@@ -86,7 +86,7 @@ trait Pkey
 	 * @param  String $key File to obtain the public key from
 	 * @return Bool        Whether or not the key was successfully imported
 	 */
-	final public function setPublicKey(String $key) : Bool
+	final public function setPublicKey($key) : Bool
 	{
 		if ($this->_public_key = $this->_importPublicKey($key)) {
 			return true;
@@ -103,7 +103,7 @@ trait Pkey
 	 * @return String           Data encrypted using public key
 	 * @see https://php.net/manual/en/function.openssl-public-encrypt.php
 	 */
-	final public function publicEncrypt(String $data, $public_key = null, Int $padding = OPENSSL_PKCS1_OAEP_PADDING) : String
+	final public function publicEncrypt($data, $public_key = null, $padding = OPENSSL_PKCS1_OAEP_PADDING)
 	{
 		if (is_null($public_key)) {
 			if (!isset($this->_public_key)) {
@@ -131,7 +131,7 @@ trait Pkey
 	 * @return String           Data decrypted using public key
 	 * @see https://php.net/manual/en/function.openssl-public-decrypt.php
 	 */
-	final public function publicDecrypt(String $data, String $public_key = null, Int $padding = OPENSSL_PKCS1_OAEP_PADDING): String
+	final public function publicDecrypt($data, $public_key = null, $padding = OPENSSL_PKCS1_OAEP_PADDING)
 	{
 		if (is_null($public_key)) {
 			if (!isset($this->_public_key)) {
@@ -158,7 +158,7 @@ trait Pkey
 	 * @return String           Data encryped with private key
 	 * @see https://php.net/manual/en/function.openssl-private-encrypt.php
 	 */
-	final public function privateEncrypt(String $data, Int $padding = OPENSSL_PKCS1_OAEP_PADDING): String
+	final public function privateEncrypt($data, $padding = OPENSSL_PKCS1_OAEP_PADDING)
 	{
 		if (!isset($this->_private_key)) {
 			throw new \Exception('Attempting to encrypt using unset private key.');
@@ -178,7 +178,7 @@ trait Pkey
 	 * @return String           Data encrypted with private key
 	 * @see https://php.net/manual/en/function.openssl-private-decrypt.php
 	 */
-	final public function privateDecrypt(String $data, Int $padding = OPENSSL_PKCS1_OAEP_PADDING) : String
+	final public function privateDecrypt($data, $padding = OPENSSL_PKCS1_OAEP_PADDING)
 	{
 		if (!isset($this->_private_key)) {
 			throw new \Exception('Attempting to decrypt using unset private key.');
@@ -198,7 +198,7 @@ trait Pkey
 	 * @return String        Signature created using private key
 	 * @see https://php.net/manual/en/function.openssl-sign.php
 	 */
-	final public function sign(String $data, Int $algo = OPENSSL_ALGO_SHA512) : String
+	final public function sign($data, $algo = OPENSSL_ALGO_SHA512)
 	{
 		if (!isset($this->_private_key)) {
 			throw new \Exception('Attempting to sign using unset private key.');
@@ -221,11 +221,11 @@ trait Pkey
 	 * @see https://php.net/manual/en/function.openssl-sign.php
 	 */
 	final public function verify(
-		String $data,
-		String $sig,
-		String $public_key = null,
-		Int $algo = OPENSSL_ALGO_SHA512
-	): Bool
+		$data,
+		$sig,
+		$public_key = null,
+		$algo       = OPENSSL_ALGO_SHA512
+	)
 	{
 		if (is_null($public_key)) {
 			if (!isset($this->_public_key)) {
@@ -259,12 +259,12 @@ trait Pkey
 	 * @see https://secure.php.net/manual/en/function.openssl-pkey-new.php
 	 */
 	final public static function genKeys(
-		String $password   = null,
-		String $digest     = 'sha512',
-		Int $length        = 4096,
-		Int $keytype       = OPENSSL_KEYTYPE_RSA,
-		Int $cipher        = OPENSSL_CIPHER_AES_256_CBC
-	) : Array
+		$password   = null,
+		$digest     = 'sha512',
+		$length     = 4096,
+		$keytype    = OPENSSL_KEYTYPE_RSA,
+		$cipher     = OPENSSL_CIPHER_AES_256_CBC
+	)
 	{
 		$configargs = [
 			'digest_alg'       => $digest,
@@ -298,7 +298,7 @@ trait Pkey
 	 * @return Resource      A positive key resource identifier
 	 * @see https://php.net/manual/en/function.openssl-pkey-get-public.php
 	 */
-	final private function _importPublicKey(String $key)
+	final private function _importPublicKey($key)
 	{
 		if (@file_exists($key)) {
 			$key = 'file://' . realpath($key);
@@ -319,7 +319,7 @@ trait Pkey
 	 * @return Resource         A positive key resource identifier
 	 * @see https://secure.php.net/manual/en/function.openssl-pkey-get-private.php
 	 */
-	final private function _importPrivateKey(String $key, String $password = null)
+	final private function _importPrivateKey($key, $password = null)
 	{
 		if (@file_exists($key)) {
 			$key = 'file://' . realpath($key);
