@@ -86,7 +86,7 @@ trait Pkey
 	 * @param  String $key File to obtain the public key from
 	 * @return Bool        Whether or not the key was successfully imported
 	 */
-	final public function setPublicKey($key) : Bool
+	final public function setPublicKey($key)
 	{
 		if ($this->_public_key = $this->_importPublicKey($key)) {
 			return true;
