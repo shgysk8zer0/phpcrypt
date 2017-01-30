@@ -39,7 +39,7 @@ trait AES
 	 * @return String             "$cipher:$algo:$iv:$options:$encrypted"
 	 * @see https://secure.php.net/manual/en/function.openssl-encrypt.php
 	 */
-	final public function encrypt(
+	final public static function encrypt(
 		String $data,
 		String $password,
 		String $cipher    = 'AES-256-CBC',
@@ -87,7 +87,7 @@ trait AES
 	 * @return String              The decrypted string
 	 * @see https://secure.php.net/manual/en/function.openssl-decrypt.php
 	 */
-	final public function decrypt(
+	final public static function decrypt(
 		String $encrypted,
 		String $password
 	) : String
