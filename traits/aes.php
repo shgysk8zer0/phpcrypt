@@ -25,96 +25,112 @@ trait AES
 {
 	/**
 	 * openssl_encrypt — Encrypts data
-	 * @param  String   $data     The data
-	 * @param  String   $password The password
-	 * @param  String   $method   The cipher <https://secure.php.net/manual/en/function.openssl-get-cipher-methods.php>
-	 * @param  integer  $options  A bitwise disjunction of the flags OPENSSL_RAW_DATA and OPENSSL_ZERO_PADDING
-	 * @return String             "$algo:$iv:$encrypted"
+	 * @param  String   $data      The data
+	 * @param  String   $password  The password
+	 * @param  String   $cipher    The cipher <https://secure.php.net/manual/en/function.openssl-get-cipher-methods.php>
+	 * @param  String   $hash_algo Password hashing algorith <https://secure.php.net/manual/en/function.hash-algos.php>
+	 * @param  integer  $options   A bitwise disjunction of the flags OPENSSL_RAW_DATA and OPENSSL_ZERO_PADDING
+	 * @return String             "$options:$cipher$algo:$iv$encrypted"
 	 * @see https://secure.php.net/manual/en/function.openssl-encrypt.php
 	 */
 	final public function encrypt(
 		String $data,
 		String $password,
-		String $method    = 'AES-256-CBC',
+		String $cipher    = 'AES-256-CBC',
 		String $hash_algo = 'sha512',
-		Int $options      = 0
+		Int    $options   = 0
 	) : String
 	{
+		// Check that cipher method and hash algorithm are supported
 		if (! in_array($hash_algo, hash_algos())) {
 			trigger_error("Unsupported hash algorithm: $hash_algo");
-			return '';
-		} elseif (! in_array($method, openssl_get_cipher_methods())) {
-			trigger_error("Unsupported cipher method: $method");
-		}
-
-		$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($method));
-
-		$password = hash($hash_algo, $password);
-
-		$encrypted = openssl_encrypt($data, $method, $password, $options, $iv);
-
-		if (is_string($encrypted)) {
-			// Append the intialization vector as hex to the encrypted data
-			// This is necessary to be able to obtain it for decrypting.
-			// It is not sensitive data, so there is no harm in appending it
-			return join(':', [
-				base64_encode($hash_algo),
-				base64_encode($iv),
-				$encrypted
-			]);
+			$encrypted = '';
+		} elseif (! in_array($cipher, openssl_get_cipher_methods())) {
+			trigger_error("Unsupported cipher method: $cipher");
+			$encrypted = '';
 		} else {
-			trigger_error(openssl_error_string());
-			return '';
+			// Get the appropriate initialization vector for cipher
+			$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($cipher));
+			// Hash the password using selected algorithm
+			$password = hash($hash_algo, $password);
+			// Get encrypted data
+			$encrypted = openssl_encrypt($data, $cipher, $password, $options, $iv);
+
+			if (is_string($encrypted)) {
+				// Convert into format "$options:$cipher$algo:$iv$encrypted"
+				$encrypted = join(':', [
+					$options,
+					base64_encode($cipher),
+					base64_encode($hash_algo),
+					base64_encode($iv),
+					$encrypted
+				]);
+			} else {
+				trigger_error(openssl_error_string());
+				$encrypted = '';
+			}
 		}
+
+		return $encrypted;
 	}
 
 	/**
 	 * openssl_encrypt — Decrypts data
-	 * @param  String   $data     "$algo:$iv:$encrypted"
-	 * @param  String   $password The password
-	 * @param  String   $method   The cipher <https://secure.php.net/manual/en/function.openssl-get-cipher-methods.php>
-	 * @param  integer  $options  A bitwise disjunction of the flags OPENSSL_RAW_DATA and OPENSSL_ZERO_PADDING
-	 * @return String             The decrypted string
+	 * @param  String   $encrypted "$option:$cipher$algo:$iv$encrypted"
+	 * @param  String   $password  The password
+	 * @return String              The decrypted string
 	 * @see https://secure.php.net/manual/en/function.openssl-decrypt.php
 	 */
 	final public function decrypt(
-		String $data,
-		String $password,
-		String $method  = 'AES-256-CBC',
-		Int $options    = 0
+		String $encrypted,
+		String $password
 	) : String
 	{
-		// Should be in the form $algo:$iv$encrypted
-		list($algo, $iv, $encrypted) = array_pad(explode(':', $data, 3), 3, null);
-		unset($data);
+		// Should be in the form $options:$cipher$algo:$iv$encrypted
+		// Get decryption paramaters from the string itself
+		$encrypted = array_pad(explode(':', $encrypted, 5), 5, null);
+		list($options, $cipher, $algo, $iv, $encrypted) = $encrypted;
 
-		if (! isset($algo, $iv, $encrypted)) {
-			trigger_error('Trying to decrypt a string that does not contain necessary data.');
+		// Check that all required paramaters are set
+		if (! isset($options, $cipher, $algo, $iv, $encrypted)) {
+			trigger_error('Trying to decrypt a an invalid string.');
 			return '';
 		}
 
-		$algo = base64_decode($algo);
-		$iv   = base64_decode($iv);
+		// Do necessary conversions to restore original values
+		$algo    = base64_decode($algo);
+		$iv      = base64_decode($iv);
+		$cipher  = base64_decode($cipher);
+		$options = intval($options);
 
+		// Check that hash algorithm, cipher, and intialization vector are valid
 		if (! in_array($algo, hash_algos())) {
 			trigger_error("Unsupported hash algorithm: $algo");
-			return '';
-		} elseif (strlen($iv) !== openssl_cipher_iv_length($method)) {
+			$decrypted = '';
+		} elseif (! in_array($cipher, openssl_get_cipher_methods())) {
+			trigger_error("Unsupported cipher method: $cipher");
+			$decrypted = '';
+		} elseif (strlen($iv) !== openssl_cipher_iv_length($cipher)) {
 			trigger_error('Invalid intialization vector length.');
-			return '';
-		} elseif (! in_array($method, openssl_get_cipher_methods())) {
-			trigger_error("Unsupported cipher method: $method");
-		}
-
-		$password = hash($algo, $password);
-		$decrypted = openssl_decrypt($encrypted, $method, $password, $options, $iv);
-
-		if (is_string($decrypted)) {
-			return $decrypted;
+			$decrypted = '';
+		} elseif (! in_array($cipher, openssl_get_cipher_methods())) {
+			trigger_error("Unsupported cipher method: $cipher");
+			$decrypted = '';
 		} else {
-			trigger_error(openssl_error_string());
-			return '';
+			// Hash the password using given algorithm
+			$password  = hash($algo, $password);
+
+			// Decrypt the data
+			$decrypted = openssl_decrypt($encrypted, $cipher, $password, $options, $iv);
+
+			// Check for errors
+			if (!is_string($decrypted)) {
+				trigger_error(openssl_error_string());
+				$decrypted = '';
+			}
 		}
+
+		return $decrypted;
 	}
 
 
