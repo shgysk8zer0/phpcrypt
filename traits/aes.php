@@ -30,7 +30,7 @@ trait AES
 	 * @param  String   $cipher    The cipher <https://secure.php.net/manual/en/function.openssl-get-cipher-methods.php>
 	 * @param  String   $hash_algo Password hashing algorith <https://secure.php.net/manual/en/function.hash-algos.php>
 	 * @param  integer  $options   A bitwise disjunction of the flags OPENSSL_RAW_DATA and OPENSSL_ZERO_PADDING
-	 * @return String             "$options:$cipher$algo:$iv$encrypted"
+	 * @return String             "$cipher:$algo:$iv:$options:$encrypted"
 	 * @see https://secure.php.net/manual/en/function.openssl-encrypt.php
 	 */
 	final public function encrypt(
@@ -57,12 +57,12 @@ trait AES
 			$encrypted = openssl_encrypt($data, $cipher, $password, $options, $iv);
 
 			if (is_string($encrypted)) {
-				// Convert into format "$options:$cipher$algo:$iv$encrypted"
+				// Convert into format "$cipher:$algo:$iv:$options:$encrypted"
 				$encrypted = join(':', [
-					$options,
 					base64_encode($cipher),
 					base64_encode($hash_algo),
 					base64_encode($iv),
+					$options,
 					$encrypted
 				]);
 			} else {
@@ -76,7 +76,7 @@ trait AES
 
 	/**
 	 * openssl_encrypt — Decrypts data
-	 * @param  String   $encrypted "$option:$cipher$algo:$iv$encrypted"
+	 * @param  String   $encrypted "$cipher:$algo:$iv:$options:$encrypted"
 	 * @param  String   $password  The password
 	 * @return String              The decrypted string
 	 * @see https://secure.php.net/manual/en/function.openssl-decrypt.php
@@ -86,21 +86,21 @@ trait AES
 		String $password
 	) : String
 	{
-		// Should be in the form $options:$cipher$algo:$iv$encrypted
+		// Should be in the form "$cipher:$algo:$iv:$options:$encrypted"
 		// Get decryption paramaters from the string itself
 		$encrypted = array_pad(explode(':', $encrypted, 5), 5, null);
-		list($options, $cipher, $algo, $iv, $encrypted) = $encrypted;
+		list($cipher, $algo, $iv, $options, $encrypted) = $encrypted;
 
 		// Check that all required paramaters are set
-		if (! isset($options, $cipher, $algo, $iv, $encrypted)) {
+		if (! isset($cipher, $algo, $iv, $options, $encrypted)) {
 			trigger_error('Trying to decrypt a an invalid string.');
 			return '';
 		}
 
 		// Do necessary conversions to restore original values
+		$cipher  = base64_decode($cipher);
 		$algo    = base64_decode($algo);
 		$iv      = base64_decode($iv);
-		$cipher  = base64_decode($cipher);
 		$options = intval($options);
 
 		// Check that hash algorithm, cipher, and intialization vector are valid
