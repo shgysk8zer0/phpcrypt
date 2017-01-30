@@ -118,7 +118,7 @@ trait Pkey
 		if (openssl_public_encrypt($data, $crypted, $public_key, $padding)) {
 			return $crypted;
 		} else {
-			trigger_error('Failed to encrypt data.');
+			trigger_error(openssl_error_string());
 			return '';
 		}
 	}
@@ -146,7 +146,7 @@ trait Pkey
 		if (openssl_private_decrypt($data, $decrypted, $public_key, $padding)) {
 			return $decrypted;
 		} else {
-			trigger_error('Failed to decrypt data');
+			trigger_error(openssl_error_string());
 			return '';
 		}
 	}
@@ -166,7 +166,7 @@ trait Pkey
 		if (openssl_private_encrypt($data, $crypted, $this->_private_key, $padding)) {
 			return $crypted;
 		} else {
-			trigger_error('Failed to encrypt data');
+			trigger_error(openssl_error_string());
 			return '';
 		}
 	}
@@ -186,7 +186,7 @@ trait Pkey
 		if (openssl_private_decrypt($data, $decrypted, $this->_private_key, $padding)) {
 			return $decrypted;
 		} else {
-			trigger_error('Failed to decrypt data');
+			trigger_error(openssl_error_string());
 			return '';
 		}
 	}
@@ -206,7 +206,7 @@ trait Pkey
 		if (openssl_sign($data, $sig, $this->_private_key, $algo)) {
 			return $sig;
 		} else {
-			trigger_error('Failed to sign data.');
+			trigger_error(openssl_error_string());
 			return '';
 		}
 	}
@@ -243,7 +243,7 @@ trait Pkey
 		} elseif ($valid === 0) {
 			return false;
 		} else {
-			trigger_error('Error validating signature.');
+			trigger_error(openssl_error_string());
 			return false;
 		}
 	}
@@ -280,7 +280,7 @@ trait Pkey
 		$res = openssl_pkey_new($configargs);
 
 		if (!$res) {
-			throw new \Exception('Error generating key pair.');
+			throw new \Exception(openssl_error_string());
 		}
 		$public = openssl_pkey_get_details($res);
 
@@ -307,7 +307,7 @@ trait Pkey
 		if ($key = @openssl_pkey_get_public($key)) {
 			return $key;
 		} else {
-			throw new \InvalidArgumentException('Failed to import public key.');
+			throw new \InvalidArgumentException(openssl_error_string());
 			return false;
 		}
 	}
@@ -328,7 +328,7 @@ trait Pkey
 		if ($key = @openssl_pkey_get_private($key, $password)) {
 			return $key;
 		} else {
-			throw new \InvalidArgumentException('Failed to import private key.');
+			throw new \InvalidArgumentException(openssl_error_string());
 			return false;
 		}
 	}
