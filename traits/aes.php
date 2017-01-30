@@ -20,11 +20,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 namespace shgysk8zer0\PHPCrypt\Traits;
-
+/**
+ * Provides easy to use symmetric encryption and decryption methods.
+ * All data except for the password is stored in the encrypted string.
+ * @example:
+ * $crypto->encrypt(MESSAGE, PASSWORD, 'AES-256-CBC', 'sha512', OPENSSL_RAW_DATA);
+ * $crypto->decrypt($encrypted, PASSWORD);
+ */
 trait AES
 {
 	/**
-	 * openssl_encrypt — Encrypts data
+	 * Encrypts $data into a format that can be securely shared and easily decrypted
 	 * @param  String   $data      The data
 	 * @param  String   $password  The password
 	 * @param  String   $cipher    The cipher <https://secure.php.net/manual/en/function.openssl-get-cipher-methods.php>
@@ -75,7 +81,7 @@ trait AES
 	}
 
 	/**
-	 * openssl_encrypt — Decrypts data
+	 * Decrypts data by parsing an encrypted string for decrpytion paramaters
 	 * @param  String   $encrypted "$cipher:$algo:$iv:$options:$encrypted"
 	 * @param  String   $password  The password
 	 * @return String              The decrypted string
