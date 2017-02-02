@@ -135,6 +135,4 @@ trait AES
 
 		return $decrypted;
 	}
-
-
 }

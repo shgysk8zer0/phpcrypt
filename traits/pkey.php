@@ -143,7 +143,7 @@ trait Pkey
 			$public_key = $this->_importPublicKey($public_key);
 		}
 
-		if (openssl_private_decrypt($data, $decrypted, $public_key, $padding)) {
+		if (openssl_public_decrypt($data, $decrypted, $public_key, $padding)) {
 			return $decrypted;
 		} else {
 			trigger_error(openssl_error_string());
@@ -298,7 +298,7 @@ trait Pkey
 	 * @return Resource      A positive key resource identifier
 	 * @see https://php.net/manual/en/function.openssl-pkey-get-public.php
 	 */
-	final private function _importPublicKey($key)
+	final public function importPublicKey($key)
 	{
 		if (@file_exists($key)) {
 			$key = 'file://' . realpath($key);
@@ -319,7 +319,7 @@ trait Pkey
 	 * @return Resource         A positive key resource identifier
 	 * @see https://secure.php.net/manual/en/function.openssl-pkey-get-private.php
 	 */
-	final private function _importPrivateKey($key, $password = null)
+	final public function importPrivateKey($key, $password = null)
 	{
 		if (@file_exists($key)) {
 			$key = 'file://' . realpath($key);
