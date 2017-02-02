@@ -36,7 +36,7 @@ trait KeyPair
 	final public static function generateKeyPair(
 		String $password    = null,
 		Array  $configargs  = \shgysk8zer0\PHPCrypt\Abstracts\Key::CONFIGARGS
-	): Array
+	): \stdClass
 	{
 		if (is_string($password)) {
 			$configargs['encrypt_key']        = true;
@@ -53,10 +53,10 @@ trait KeyPair
 
 		openssl_pkey_export($res, $private, $password, $configargs);
 
-		return [
-			'private' => \shgysk8zer0\PHPCrypt\PrivateKey::import($private, $password),
-			'public'  => \shgysk8zer0\PHPCrypt\PublicKey::import($public['key'])
-		];
+		$keys = new \stdClass();
+		$keys->public = \shgysk8zer0\PHPCrypt\PublicKey::import($public['key']);
+		$keys->private = \shgysk8zer0\PHPCrypt\PrivateKey::import($private, $password);
+		return $keys;
 	}
 
 	final public function publicEncrypt(...$args): String
