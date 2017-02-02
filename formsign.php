@@ -34,8 +34,6 @@ namespace shgysk8zer0\PHPCrypt;
  */
 final class FormSign extends KeyPair
 {
-	use Traits\PKey;
-
 	/**
 	 * Array to store instances of class by config files
 	 * @var Array
