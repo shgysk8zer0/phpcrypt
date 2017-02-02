@@ -59,6 +59,16 @@ trait KeyPair
 		return $keys;
 	}
 
+	final public function encrypt(...$args): String
+	{
+		return call_user_func_array([$this->_public_key, 'encrypt'], $args);
+	}
+
+	final public function decrypt(...$args): String
+	{
+		return call_user_func_array([$this->_private_key, 'decrypt'], $args);;
+	}
+
 	final public function publicEncrypt(...$args): String
 	{
 		return call_user_func_array([$this->_public_key, 'encrypt'], $args);
@@ -76,7 +86,7 @@ trait KeyPair
 
 	final public function privateDecrypt(...$args): String
 	{
-		return call_user_func_array([$this->_private_key, 'decrypt'], $args);;
+		return call_user_func_array([$this->_private_key, 'decrypt'], $args);
 	}
 
 	final public function sign(...$args): String
