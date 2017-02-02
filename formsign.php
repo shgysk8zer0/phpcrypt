@@ -32,7 +32,7 @@ namespace shgysk8zer0\PHPCrypt;
  *
  * @uses <https://github.com/shgysk8zer0/phpcrypt/blob/master/traits/pkey.php>
  */
-final class FormSign
+final class FormSign extends KeyPair
 {
 	use Traits\PKey;
 
@@ -40,7 +40,7 @@ final class FormSign
 	 * Array to store instances of class by config files
 	 * @var Array
 	 */
-	private static $_instances = [];
+	private static $_form_instances = [];
 
 	/**
 	 * Static method to load from JSON config file
@@ -57,29 +57,16 @@ final class FormSign
 
 		// Check if instance should exist in static array. If so, return it.
 		// If not, create one, store it in the static array, then return that.
-		if (! array_key_exists($creds, static::$_instances)) {
+		if (! array_key_exists($creds, static::$_form_instances)) {
 			$obj = json_decode(file_get_contents($creds, true));
 
-			static::$_instances[$creds] = new self(
+			static::$_form_instances[$creds] = new self(
 				$obj->publicKey,
 				$obj->privateKey,
 				$obj->password ?? null
 			);
 		}
-		return static::$_instances[$creds];
-	}
-
-	/**
-	 * Create an instance of class using public and private keys
-	 * @param String $publicKey  Path to {publicKey}.pem
-	 * @param String $privateKey Path to {privateKey}.pem
-	 * @param String $password   Optional password to unlock private key
-	 */
-	public function __construct(String $publicKey, String $privateKey, String $password = null)
-	{
-		// Load keys
-		$this->setPublicKey($publicKey);
-		$this->setPrivateKey($privateKey, $password);
+		return static::$_form_instances[$creds];
 	}
 
 	/**
@@ -133,7 +120,7 @@ final class FormSign
 		$sig = $form->appendChild($doc->createElement('input'));
 		$sig->setAttribute('type', 'hidden');
 		$sig->setAttribute('name', "{$name}[{$arr_key}][signature]");
-		$sig->setAttribute('value', base64_encode($signature));
+		$sig->setAttribute('value', $signature);
 		return $form;
 	}
 
@@ -214,7 +201,7 @@ final class FormSign
 					$ver->ip,
 					$ver->expires,
 				]),
-				base64_decode($ver->signature)
+				$ver->signature
 			)) {
 				trigger_error('Form signature is invalid');
 				return false;
