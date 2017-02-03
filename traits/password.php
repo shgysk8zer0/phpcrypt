@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @author Chris Zuber
  * @package shgysk8zer0\PHPCrypt

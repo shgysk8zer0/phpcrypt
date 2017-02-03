@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @author Chris Zuber
  * @package shgysk8zer0\PHPCrypt
@@ -19,7 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 namespace shgysk8zer0\PHPCrypt;
-
 /**
  * A collection of openssl_* functions for public keys
  */
