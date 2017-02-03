@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @author Chris Zuber
  * @version 1.0.0
