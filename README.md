@@ -1,4 +1,6 @@
 # PHPCrypt
+
+[![Join the chat at https://gitter.im/shgysk8zer0/phpcrypt](https://badges.gitter.im/shgysk8zer0/phpcrypt.svg)](https://gitter.im/shgysk8zer0/phpcrypt?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/shgysk8zer0/phpcrypt.svg?branch=master)](https://travis-ci.org/shgysk8zer0/phpcrypt)
 > Provides easy to use classes and traits for cryptographic functions using `openssl_*`. Intended
 > to be compatible with [JSCrypt](https://github.com/shgysk8zer0/JSCrypt) &
