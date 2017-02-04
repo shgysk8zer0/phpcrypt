@@ -74,6 +74,27 @@ trait Hash
 	 */
 	final public static function match(String $str, String $hash): Bool
 	{
+		switch(strlen($hash)) {
+			case 40:
+				$str = static::sha1($str);
+				break;
+
+			case 64:
+				$str = static::sha256($str);
+				break;
+
+			case 96:
+				$str = static::sha384($str);
+				break;
+
+			case 128:
+				$str = static::sha512($str);
+				break;
+
+			default:
+				trigger_error('Could not match with any supported hashing algorithm.');
+				$str = '';
+		}
 		return hash_equals($str, $hash);
 	}
 }

@@ -74,6 +74,27 @@ trait HashFile
 	 */
 	final public static function matchFile(String $fname, String $hash): Bool
 	{
-		return hash_equals(file_get_contents($fname), $hash);
+		switch(strlen($hash)) {
+			case 40:
+				$str = static::sha1File($fname);
+				break;
+
+			case 64:
+				$str = static::sha256File($fname);
+				break;
+
+			case 96:
+				$str = static::sha384File($fname);
+				break;
+
+			case 128:
+				$str = static::sha512File($fname);
+				break;
+
+			default:
+				trigger_error('Could not match with any supported hashing algorithm.');
+				$str = '';
+		}
+		return hash_equals($str, $hash);
 	}
 }
