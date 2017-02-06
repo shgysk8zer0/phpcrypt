@@ -4,7 +4,7 @@ php: '7.0'
 env: MIN_PHP_VERSION="7.0"
 before_install:
   - phpenv config-rm xdebug.ini
-script: php index.php
+script: php test.php
 notifications:
   webhooks:
     urls:
