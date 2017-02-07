@@ -88,7 +88,7 @@ trait HashFile
 				break;
 
 			case 128:
-				$str = static::sha512File($fname) . 't';
+				$str = static::sha512File($fname);
 				break;
 
 			default:
