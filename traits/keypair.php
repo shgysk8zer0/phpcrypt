@@ -21,6 +21,7 @@ declare(strict_types=1);
  */
 namespace shgysk8zer0\PHPCrypt\Traits;
 
+use \shgysk8zer0\PHPCrypt\Abstracts\Key as Key;
 /**
  * A collection of methods for working with private/public keys.
  * See PublicKey & PrivateKey class for more documentation.
@@ -36,9 +37,10 @@ trait KeyPair
 	 */
 	final public static function generateKeyPair(
 		String $password    = null,
-		Array  $configargs  = \shgysk8zer0\PHPCrypt\Abstracts\Key::CONFIGARGS
+		Array  $configargs  = array()
 	): \stdClass
 	{
+		$configargs = array_merge($configargs, Key::CONFIGARGS);
 		if (is_string($password)) {
 			$configargs['encrypt_key']        = true;
 		} else {
