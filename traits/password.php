@@ -37,13 +37,12 @@ trait Password
 	 * @see https://php.net/manual/en/function.password-hash.php
 	 */
 	final protected function passwordHash(
-		$password,
-		$algo    = PASSWORD_DEFAULT,
-		Array $options = array()
-	)
+		String $password,
+		Inst   $algo    = PASSWORD_DEFAULT,
+		Array  $options = array()
+	): String
 	{
-		$password = password_hash($password, $algo, $options);
-		return $password;
+		return password_hash($password, $algo, $options);
 	}
 
 	/**
@@ -53,7 +52,7 @@ trait Password
 	 * @return bool            TRUE if the password and hash match, or FALSE otherwise.
 	 * @see https://php.net/manual/en/function.password-verify.php
 	 */
-	final protected function passwordVerify($password, $hash = '')
+	final protected function passwordVerify(String $password, String $hash = ''): Bool
 	{
 		return password_verify($password, $hash);
 	}
@@ -64,7 +63,7 @@ trait Password
 	 * @return array
 	 * @see https://php.net/manual/en/function.password-get-info.php
 	 */
-	final protected function passwordGetInfo($hash)
+	final protected function passwordGetInfo(String $hash): Array
 	{
 		return password_get_info($hash);
 	}
@@ -78,10 +77,10 @@ trait Password
 	 * @see https://php.net/manual/en/function.password-needs-rehash.php
 	 */
 	final protected function passwordNeedsRehash(
-		$hash,
-		$algo    = PASSWORD_DEFAULT,
+		String $hash,
+		Int    $algo    = PASSWORD_DEFAULT,
 		Array  $options = array()
-	)
+	): Bool
 	{
 		return password_needs_rehash($hash, $algo, $options);
 	}
