@@ -37,7 +37,7 @@ trait Password
 	 * @see https://php.net/manual/en/function.password-hash.php
 	 */
 	final protected function passwordHash(
-		&$password,
+		$password,
 		$algo    = PASSWORD_DEFAULT,
 		Array $options = array()
 	)
