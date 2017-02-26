@@ -102,7 +102,7 @@ final class FormSign extends KeyPair
 		$expire = $form->appendChild($doc->createElement('input'));
 		$expire->setAttribute('type', 'hidden');
 		$expire->setAttribute('name', "{$name}[{$arr_key}][expires]");
-		$expire->setAttribute('value', strtotime($expires));
+		$expire->setAttribute('value', (string) strtotime($expires));
 
 		$form_name = $form->appendChild($doc->createElement('input'));
 		$form_name->setAttribute('type', 'hidden');
