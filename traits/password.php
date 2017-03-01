@@ -38,7 +38,7 @@ trait Password
 	 */
 	final protected function passwordHash(
 		String $password,
-		Inst   $algo    = PASSWORD_DEFAULT,
+		Int    $algo    = PASSWORD_DEFAULT,
 		Array  $options = array()
 	): String
 	{
