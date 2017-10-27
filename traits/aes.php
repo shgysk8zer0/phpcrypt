@@ -41,12 +41,12 @@ trait AES
 	 * @see https://secure.php.net/manual/en/function.openssl-encrypt.php
 	 */
 	final public static function encrypt(
-		$data,
-		$password,
-		$cipher    = 'AES-256-CBC',
-		$hash_algo = 'sha512',
-		$options   = 0
-	)
+		String $data,
+		String $password,
+		String $cipher    = 'AES-256-CBC',
+		String $hash_algo = 'sha512',
+		Int    $options   = 0
+	): String
 	{
 		// Check that cipher method and hash algorithm are supported
 		if (! in_array($hash_algo, hash_algos())) {
@@ -88,7 +88,7 @@ trait AES
 	 * @return String              The decrypted string
 	 * @see https://secure.php.net/manual/en/function.openssl-decrypt.php
 	 */
-	final public static function decrypt($encrypted, $password)
+	final public static function decrypt(String $encrypted, String $password): String
 	{
 		// Should be in the form "$cipher:$algo:$iv:$options:$encrypted"
 		// Get decryption paramaters from the string itself
