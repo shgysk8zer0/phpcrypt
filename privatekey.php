@@ -150,7 +150,7 @@ final class PrivateKey extends Abstracts\Key
 	 * Export the key to file
 	 * @param  String $filename   /path/to/key.pem
 	 * @param  String $password   Optional password to lock the key
-	 * @param  [type] $configargs Optional array of configuration paramaters
+	 * @param  Array  $configargs Optional array of configuration paramaters
 	 * @return Bool               Whether or not it saved successfully
 	 */
 	public function exportToFile(
